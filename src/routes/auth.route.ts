@@ -21,7 +21,7 @@ export default class AuthRouter implements RouterAndPath {
 	public router = Router();
 
 	constructor() {
-		console.log("AuthRouter");
+		// console.log("AuthRouter");
 
 		// initialize the auth controller and call the routes
 		const authController = new AuthController();

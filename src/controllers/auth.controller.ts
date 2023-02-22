@@ -27,8 +27,6 @@ export class AuthController {
 	private oauth2Client: OAuth2Client = new OAuth2Client();
 
 	constructor() {
-		console.log("AuthController");
-
 		// load credentials from file if exist and set the oauth2 client
 		const credentials = JSON.parse(
 			readFileSync(credentialsOptions.credentialsPath, "utf-8")
@@ -48,7 +46,7 @@ export class AuthController {
 	 * @returns {Promise<void>}
 	 */
 	public async googleAuthHandler(req: Request, res: Response) {
-		console.log("googleAuthHandler");
+		// console.log("googleAuthHandler");
 
 		const client: OAuth2Client | null =
 			await GoogleUtils.loadSavedCredentialsIfExist(credentialsOptions);

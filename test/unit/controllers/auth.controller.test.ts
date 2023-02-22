@@ -30,8 +30,14 @@ describe("AuthController unit tests", () => {
 	let response: Response;
 	let next: NextFunction;
 
-	beforeAll(() => {
-		jest.spyOn(fs, "readFileSync").mockImplementation(() => {
+	// beforeAll(() => {});
+
+	afterAll(() => {
+		jest.restoreAllMocks();
+	});
+
+	beforeEach(() => {
+		jest.spyOn(fs, "readFileSync").mockImplementationOnce(() => {
 			return Buffer.from(
 				JSON.stringify({
 					installed: {
@@ -41,16 +47,6 @@ describe("AuthController unit tests", () => {
 				})
 			);
 		});
-	});
-
-	afterAll(() => {
-		jest.restoreAllMocks();
-	});
-
-	beforeEach(() => {
-		// console.log(testFn.name);
-		// console.log(expect.getState().currentTestName);
-		// console.log("beforeEach");
 
 		request = {} as Request;
 
@@ -61,14 +57,6 @@ describe("AuthController unit tests", () => {
 			status: jest.fn().mockReturnThis() as Response["status"],
 		} as Response;
 		next = jest.fn() as NextFunction;
-		// fs.readFileSync = jest.fn().mockReturnValueOnce(
-		// 	JSON.stringify({
-		// 		installed: {
-		// 			client_id: "mock_client_id",
-		// 			client_secret: "mock_client_secret",
-		// 		},
-		// 	})
-		// ) as any;
 	});
 
 	test("should create an instance of AuthController", () => {
