@@ -1,6 +1,9 @@
 # Secrets
 credentials.json
 token.json
+*.cert
+*.key
+
 
 # Logs
 logs

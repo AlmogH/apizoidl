@@ -1,0 +1,8 @@
+{
+	"transform": {
+		"^.+\\.(t|j)sx?$": "@swc/jest"
+	},
+	"collectCoverage": true,
+	"coverageDirectory": "coverage",
+	"collectCoverageFrom": ["src/**/*.{js,jsx,ts,tsx}", "!src/**/*.d.ts"]
+}
