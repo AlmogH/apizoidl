@@ -1,7 +1,6 @@
 name: Node.js CI tests
 
-on:
-  push: ["push"]
+on: [push]
 
 jobs:
   test:
