@@ -4,9 +4,12 @@
 import { NextFunction, Request, Response } from "express";
 import { OAuth2Client } from "google-auth-library";
 import { CREDENTIALS_PATH, SCOPES, TOKEN_PATH } from "../configs/google.config";
-import { readFileSync } from "fs";
+import fs from "fs";
 import { CredentialsOptionsRoutes } from "../interfaces/credentialsOptionsRoutes.interface";
-import { GoogleUtils } from "../utils/googleAuth.util";
+import {
+	loadSavedCredentialsIfExist,
+	saveCredentials,
+} from "../utils/googleAuth.util";
 
 // define the credentials options
 const credentialsOptions: CredentialsOptionsRoutes = {
@@ -28,8 +31,9 @@ export class AuthController {
 
 	constructor() {
 		// load credentials from file if exist and set the oauth2 client
+		// TODO - add error handling
 		const credentials = JSON.parse(
-			readFileSync(credentialsOptions.credentialsPath, "utf-8")
+			fs.readFileSync(credentialsOptions.credentialsPath, "utf-8")
 		);
 
 		this.oauth2Client = new OAuth2Client({
@@ -45,11 +49,16 @@ export class AuthController {
 	 * @param {Response} res express response
 	 * @returns {Promise<void>}
 	 */
-	public async googleAuthHandler(req: Request, res: Response) {
+	public async googleAuthHandler(
+		_req: Request,
+		res: Response,
+		_next?: NextFunction
+	) {
 		// console.log("googleAuthHandler");
 
-		const client: OAuth2Client | null =
-			await GoogleUtils.loadSavedCredentialsIfExist(credentialsOptions);
+		const client: OAuth2Client | null = await loadSavedCredentialsIfExist(
+			credentialsOptions
+		);
 
 		if (client) {
 			this.oauth2Client = client;
@@ -78,11 +87,14 @@ export class AuthController {
 		res: Response,
 		next: NextFunction
 	) {
-		if (!req.query.code) return next(new Error(req.query.error as string));
+		if (!req.query?.code) {
+			if (req.query?.error) return next(new Error(req.query.error as string));
+			else return next(new Error("No code provided"));
+		}
 		const code = req.query.code as string;
 		const { tokens } = await this.oauth2Client.getToken(code);
 		this.oauth2Client.setCredentials(tokens);
-		await GoogleUtils.saveCredentials(this.oauth2Client, credentialsOptions);
+		await saveCredentials(this.oauth2Client, credentialsOptions);
 		res.sendStatus(200);
 	}
 }

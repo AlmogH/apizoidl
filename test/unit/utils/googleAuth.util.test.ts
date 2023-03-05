@@ -1,10 +1,31 @@
+/**
+ * =============================================
+ * ============= Testing imports ===============
+ * =============================================
+ */
 import { afterEach, describe, expect, jest, test } from "@jest/globals";
-import { fsMock } from "../../testUtils/mocks";
-fsMock();
+import "../../testUtils/oAuth2Client.mock";
+
+/**
+ * =============================================
+ * =================== Imports =================
+ * =============================================
+ */
 
 import { promises as fs } from "fs";
-import { GoogleUtils } from "../../../src/utils/googleAuth.util";
 import { OAuth2Client } from "google-auth-library";
+import {
+	loadSavedCredentialsIfExist,
+	saveCredentials,
+} from "../../../src/utils/googleAuth.util";
+
+import { CredentialsOptionsRoutes } from "../../../src/interfaces/credentialsOptionsRoutes.interface";
+
+/**
+ * =============================================
+ * =================== Mocks ===================
+ * =============================================
+ */
 
 // Create a mock OAuth2Client object for testing
 const mockOAuth2Client = {
@@ -36,28 +57,60 @@ const mockOptions: CredentialsOptionsRoutes = {
 	tokenPath: "/mock/token.json",
 };
 
+/**
+ * =============================================
+ * =================== Tests ===================
+ * =============================================
+ */
+
+/**
+ * Unit tests for the loadSavedCredentialsIfExist function in src/utils/googleAuth.util.ts
+ */
 describe("loadSavedCredentialsIfExist", () => {
+	afterEach(() => {
+		jest.clearAllMocks();
+	});
+
 	test("should return OAuth2Client when TOKEN_PATH exists", async () => {
+		// Mock the fs.readFile function to return a mock token
 		const mockReadFile = jest
 			.spyOn(fs, "readFile")
 			.mockResolvedValueOnce(Buffer.from(JSON.stringify(mockToken)));
-		const result = await GoogleUtils.loadSavedCredentialsIfExist(mockOptions);
+
+		// Call the function to be tested
+		const result = await loadSavedCredentialsIfExist(mockOptions);
+
+		// Check that the function calls the correct functions with the correct arguments
+		expect(OAuth2Client).toBeCalledWith({
+			clientId: mockToken.client_id,
+			clientSecret: mockToken.client_secret,
+		});
 		expect(mockReadFile).toBeCalledWith(mockOptions.tokenPath);
 		expect(result).toBeInstanceOf(OAuth2Client);
+		expect(OAuth2Client.prototype.setCredentials).toBeCalledWith({
+			refresh_token: mockToken.refresh_token,
+		});
 	});
 
 	test("should return null when TOKEN_PATH does not exist", async () => {
+		// Mock the fs.readFile function to throw an error
 		const mockReadFile = jest
 			.spyOn(fs, "readFile")
 			.mockRejectedValueOnce(new Error("File not found"));
-		const result = await GoogleUtils.loadSavedCredentialsIfExist(mockOptions);
+
+		// Call the function to be tested
+		const result = await loadSavedCredentialsIfExist(mockOptions);
+
+		// Check that the function calls the correct functions with the correct arguments
+		expect(OAuth2Client).not.toBeCalled();
 		expect(mockReadFile).toBeCalledWith(mockOptions.tokenPath);
 		expect(result).toBeNull();
 	});
 });
 
-import { CredentialsOptionsRoutes } from "../../../src/interfaces/credentialsOptionsRoutes.interface";
-
+/**
+ * Unit tests for the saveCredentials function in src/utils/googleAuth.util.ts
+ */
 describe("saveCredentials", () => {
 	afterEach(() => {
 		jest.clearAllMocks();
@@ -84,7 +137,7 @@ describe("saveCredentials", () => {
 				.mockResolvedValueOnce(undefined);
 
 			// Call the saveCredentials function with the mock OAuth2Client and options objects
-			await GoogleUtils.saveCredentials(mockClient, mockOptions);
+			await saveCredentials(mockClient, mockOptions);
 
 			// Assert that the fs module was called with the correct arguments
 			expect(mockReadFile).toHaveBeenCalledWith(mockOptions.credentialsPath);
@@ -106,7 +159,7 @@ describe("saveCredentials", () => {
 
 		// Call the saveCredentials function with the mock OAuth2Client and options objects, and expect it to throw an error
 		await expect(
-			GoogleUtils.saveCredentials(mockOAuth2Client, mockOptions)
+			saveCredentials(mockOAuth2Client, mockOptions)
 		).rejects.toThrow("Unable to read file");
 
 		// Assert that the fs module was called with the correct arguments
@@ -124,13 +177,13 @@ describe("saveCredentials", () => {
 
 		// Call the saveCredentials function with the mock OAuth2Client and options objects, and expect it to throw an error
 		await expect(
-			GoogleUtils.saveCredentials(mockOAuth2Client, mockOptions)
+			saveCredentials(mockOAuth2Client, mockOptions)
 		).rejects.toThrow("Unable to write file");
 
 		// Assert that the fs module was called with the correct arguments
 		expect(mockReadFile).toHaveBeenCalledWith("/mock/credentials.json");
 		expect(mockWriteFile).toHaveBeenCalledWith(
-			"/mock/token.json",
+			mockOptions.tokenPath,
 			JSON.stringify({
 				...mockGoogleCredentials.installed,
 				...mockOAuth2Client.credentials,

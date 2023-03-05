@@ -3,9 +3,12 @@
         "aicommits",
         "apizoidl",
         "codepaths",
+        "fileoverview",
         "googleauth",
         "keyfile",
         "middlewares",
         "tsbuildinfo"
-    ]
+    ],
+    "todo-tree.tree.showBadges": false,
+    "todo-tree.tree.scanMode": "workspace"
 }
