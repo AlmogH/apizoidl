@@ -4,6 +4,7 @@
 import { Router } from "express";
 import { AuthController } from "../controllers/auth.controller";
 import RouterAndPath from "../interfaces/routerAndPath.interface";
+import logger from "../utils/logger.util";
 
 /**
  * Router Definition for /auth path
@@ -21,7 +22,7 @@ export default class AuthRouter implements RouterAndPath {
 	public router = Router();
 
 	constructor() {
-		// console.log("AuthRouter");
+		logger.debug("AuthRouter - constructor");
 
 		// initialize the auth controller and call the routes
 		const authController = new AuthController();

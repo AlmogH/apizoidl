@@ -6,6 +6,7 @@ import express from "express";
 import helmet from "helmet";
 import RouterAndPath from "./interfaces/routerAndPath.interface";
 import { errorMiddleware } from "./middlewares/error.middleware";
+import morganMiddleware from "./middlewares/morgan.middleware";
 
 /**
  * Express App Class implementation
@@ -57,6 +58,8 @@ export default class App {
 		this.app.use(cors());
 		// express.json() is a method inbuilt in express to recognize the incoming Request Object as a JSON Object
 		this.app.use(express.json());
+		// morgan is a HTTP request logger middleware for node.js
+		this.app.use(morganMiddleware);
 	}
 
 	/**

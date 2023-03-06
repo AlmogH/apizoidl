@@ -10,6 +10,7 @@ import {
 	loadSavedCredentialsIfExist,
 	saveCredentials,
 } from "../utils/googleAuth.util";
+import logger from "../utils/logger.util";
 
 // define the credentials options
 const credentialsOptions: CredentialsOptionsRoutes = {
@@ -30,6 +31,7 @@ export class AuthController {
 	private oauth2Client: OAuth2Client = new OAuth2Client();
 
 	constructor() {
+		logger.debug("AuthController - constructor");
 		// load credentials from file if exist and set the oauth2 client
 		// TODO - add error handling
 		const credentials = JSON.parse(
@@ -54,7 +56,7 @@ export class AuthController {
 		res: Response,
 		_next?: NextFunction
 	) {
-		// console.log("googleAuthHandler");
+		logger.debug("AuthController - googleAuthHandler");
 
 		const client: OAuth2Client | null = await loadSavedCredentialsIfExist(
 			credentialsOptions
@@ -87,6 +89,7 @@ export class AuthController {
 		res: Response,
 		next: NextFunction
 	) {
+		logger.debug("AuthController - getTokenHandler");
 		if (!req.query?.code) {
 			if (req.query?.error) return next(new Error(req.query.error as string));
 			else return next(new Error("No code provided"));

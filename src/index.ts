@@ -7,6 +7,7 @@ import authRouter from "./routes/auth.route";
 import https from "https";
 import options from "./configs/ssl.config";
 import App from "./app";
+import logger from "./utils/logger.util";
 
 dotenv.config();
 
@@ -31,5 +32,5 @@ const app = new App([new authRouter()]).getServer();
  * @description create a new https server instance and listen on the port
  */
 https.createServer(options, app).listen(PORT, () => {
-	console.log(`Listening at https://localhost:${PORT}`);
+	logger.info(`Listening at https://localhost:${PORT}`);
 });
