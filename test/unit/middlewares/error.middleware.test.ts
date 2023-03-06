@@ -3,7 +3,14 @@
  * ============= Testing imports ===============
  * =============================================
  */
-import { jest, describe, test, expect, beforeEach } from "@jest/globals";
+import {
+	jest,
+	describe,
+	test,
+	expect,
+	beforeEach,
+	afterEach,
+} from "@jest/globals";
 import { mockWinstonLogs } from "../../testUtils/winston.mock";
 
 /**
@@ -14,8 +21,6 @@ import { mockWinstonLogs } from "../../testUtils/winston.mock";
 import { errorMiddleware } from "../../../src/middlewares/error.middleware";
 import { HttpException } from "../../../src/interfaces/httpException.interface";
 import { Request, Response, NextFunction } from "express";
-import { afterEach } from "node:test";
-import winston from "winston";
 
 /**
  * =============================================
