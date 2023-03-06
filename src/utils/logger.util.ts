@@ -53,7 +53,9 @@ const formatConfig = format.combine(
 // In this example, we are using three different transports
 const transportsConfig = [
 	// Allow the use the console to print the messages
-	new transports.Console(),
+	new transports.Console({
+		silent: process.env.NODE_ENV === "test",
+	}),
 	// Allow to print all the error level messages inside the error.log file
 	new transports.File({
 		filename: "logs/error.log",
