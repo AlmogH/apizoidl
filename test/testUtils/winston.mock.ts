@@ -3,6 +3,7 @@ import { jest } from "@jest/globals";
 const mockWinstonLogs = {
 	info: jest.fn(),
 	error: jest.fn(),
+	debug: jest.fn(),
 };
 
 jest.mock("winston", () => ({

@@ -25,12 +25,16 @@ const PORT: number = parseInt(process.env.PORT as string, 10) || 3000;
  *  App Configuration
  * @description create a new express app instance
  */
-const app = new App([new authRouter()]).getServer();
-
-/**
- * Server Activation
- * @description create a new https server instance and listen on the port
- */
-https.createServer(options, app).listen(PORT, () => {
-	logger.info(`Listening at https://localhost:${PORT}`);
-});
+try {
+	const app = new App([new authRouter()]).getServer();
+	/**
+	 * Server Activation
+	 * @description create a new https server instance and listen on the port
+	 */
+	https.createServer(options, app).listen(PORT, () => {
+		logger.info(`Listening at https://localhost:${PORT}`);
+	});
+} catch (err) {
+	logger.error("Server can't start because of:\n" + err);
+	process.exit(1);
+}
