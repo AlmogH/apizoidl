@@ -26,7 +26,7 @@ import morganMiddleware from "./middlewares/morgan.middleware";
 export default class App {
 	public app: express.Application;
 
-	constructor(routes: RouterAndPath[]) {
+	constructor(routes: (new () => RouterAndPath)[]) {
 		this.app = express();
 		this.initializeMiddlewares();
 		this.initializeRoutes(routes);
@@ -82,9 +82,10 @@ export default class App {
 	 * ]);
 	 * app.listen(3000);
 	 */
-	private initializeRoutes(routes: RouterAndPath[]) {
+	private initializeRoutes(routes: (new () => RouterAndPath)[]) {
 		routes.map((route) => {
-			this.app.use(route.path, route.router);
+			const routeInitialize = new route();
+			this.app.use(routeInitialize.path, routeInitialize.router);
 		});
 	}
 }

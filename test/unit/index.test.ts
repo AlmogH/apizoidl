@@ -8,7 +8,7 @@ import { describe, test, expect, jest, beforeEach } from "@jest/globals";
 import "../testUtils/app.mock";
 import { appListen, createServer } from "../testUtils/https.mock";
 import "../testUtils/winston.mock";
-import "../testUtils/ssl.config.mock";
+import "../testUtils/fs.mock";
 
 /**
  * =============================================

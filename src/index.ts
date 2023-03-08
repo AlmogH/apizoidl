@@ -3,7 +3,7 @@
  * @description import the required modules and interfaces
  */
 import * as dotenv from "dotenv";
-import authRouter from "./routes/auth.route";
+import AuthRouter from "./routes/auth.route";
 import https from "https";
 import options from "./configs/ssl.config";
 import App from "./app";
@@ -26,7 +26,7 @@ const PORT: number = parseInt(process.env.PORT as string, 10) || 3000;
  * @description create a new express app instance
  */
 try {
-	const app = new App([new authRouter()]).getServer();
+	const app = new App([AuthRouter]).getServer();
 	/**
 	 * Server Activation
 	 * @description create a new https server instance and listen on the port
