@@ -4,6 +4,7 @@
 import { promises as fs } from "fs";
 import { OAuth2Client, JWTInput } from "google-auth-library";
 import { CredentialsOptionsRoutes } from "../interfaces/credentialsOptionsRoutes.interface";
+import logger from "./logger.util";
 
 /**
  * Reads previously authorized credentials from the save file.
@@ -18,8 +19,8 @@ const loadSavedCredentialsIfExist = async (
 	try {
 		content = await fs.readFile(options.tokenPath);
 	} catch (err) {
-		// TODO: Handle error add logging
-		return null;
+		logger.error("loadSavedCredentialsIfExist - " + err);
+		throw err;
 	}
 
 	// Parse the token file contents to extract the refresh token

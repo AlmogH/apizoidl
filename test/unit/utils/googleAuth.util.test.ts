@@ -99,12 +99,13 @@ describe("loadSavedCredentialsIfExist", () => {
 			.mockRejectedValueOnce(new Error("File not found"));
 
 		// Call the function to be tested
-		const result = await loadSavedCredentialsIfExist(mockOptions);
+		await expect(loadSavedCredentialsIfExist(mockOptions)).rejects.toThrow(
+			"File not found"
+		);
 
 		// Check that the function calls the correct functions with the correct arguments
 		expect(OAuth2Client).not.toBeCalled();
 		expect(mockReadFile).toBeCalledWith(mockOptions.tokenPath);
-		expect(result).toBeNull();
 	});
 });
 

@@ -33,10 +33,15 @@ export class AuthController {
 	constructor() {
 		logger.debug("AuthController - constructor");
 		// load credentials from file if exist and set the oauth2 client
-		// TODO - add error handling
-		const credentials = JSON.parse(
-			fs.readFileSync(credentialsOptions.credentialsPath, "utf-8")
-		);
+		let credentials;
+		try {
+			credentials = JSON.parse(
+				fs.readFileSync(credentialsOptions.credentialsPath, "utf-8")
+			);
+		} catch (err) {
+			logger.error("AuthController - constructor - " + err);
+			throw err;
+		}
 
 		this.oauth2Client = new OAuth2Client({
 			clientId: credentials.installed.client_id,
@@ -97,7 +102,12 @@ export class AuthController {
 		const code = req.query.code as string;
 		const { tokens } = await this.oauth2Client.getToken(code);
 		this.oauth2Client.setCredentials(tokens);
-		await saveCredentials(this.oauth2Client, credentialsOptions);
+		try {
+			await saveCredentials(this.oauth2Client, credentialsOptions);
+		} catch (err) {
+			logger.error("AuthController - getTokenHandler - " + err);
+			return next(err);
+		}
 		res.sendStatus(200);
 	}
 }
