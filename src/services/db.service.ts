@@ -10,20 +10,20 @@ import { JSONFile } from "lowdb/lib/node";
 /**
  * DataBase service class as singleton for lowdb
  */
-class DataBaseService {
-	private static instance: DataBaseService;
+class DatabaseService {
+	private static instance: DatabaseService;
 	private db: Low;
 
 	private constructor() {
 		this.db = new Low(new JSONFile(dbFile));
 	}
 
-	public static getInstance(): DataBaseService {
-		if (!DataBaseService.instance) {
-			DataBaseService.instance = new DataBaseService();
+	public static getInstance(): DatabaseService {
+		if (!DatabaseService.instance) {
+			DatabaseService.instance = new DatabaseService();
 		}
 
-		return DataBaseService.instance;
+		return DatabaseService.instance;
 	}
 
 	public getDb(): Low {
@@ -31,4 +31,4 @@ class DataBaseService {
 	}
 }
 
-export default DataBaseService;
+export default DatabaseService;
